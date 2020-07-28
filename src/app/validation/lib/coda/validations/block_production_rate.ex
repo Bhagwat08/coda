@@ -6,18 +6,19 @@ defmodule Coda.Validations.BlockProductionRate do
 
   use Architecture.Validation
 
-  # TODO
-  defp slot_time, do: 3 * 60 * 1000
-  defp grace_window(_state), do: 20 * 60 * 1000
-  defp acceptable_margin, do: 0.05
+  import Coda.Validations.Configuration
 
-  defp win_rate(_), do: raise("TODO")
+  require Logger
+
+  # TODO: a dummy value; instead, calculate dynamically from running network
+  defp expected_win_rate(_stake_ratio), do: 0.10
 
   @impl true
   def statistic, do: Coda.Statistics.BlockProductionRate
 
   @impl true
   def validate(_resource, Coda.Statistics.BlockProductionRate, state) do
+    IO.puts "VALIDATOR FOR BLOCK PRODUCTION RATE"
     # implication
     if state.elapsed_time < grace_window(state) do
       :valid
@@ -30,15 +31,19 @@ defmodule Coda.Validations.BlockProductionRate do
 
       cond do
         slot_production_ratio >= 1 ->
-          {:invalid, "wow, something is *really* broken"}
+	  IO.puts "CASE 1"
+          {:invalid, "unexpected, slot production ratio is 1 or greater"}
 
-        slot_production_ratio < win_rate(state.stake_ratio) - margin ->
+        slot_production_ratio < expected_win_rate(state.stake_ratio) - margin ->
+	  IO.puts "CASE 2"
           {:invalid, "not producing enough blocks"}
 
-        slot_production_ratio > win_rate(state.stake_ratio) + margin ->
+        slot_production_ratio > expected_win_rate(state.stake_ratio) + margin ->
+	  IO.puts "CASE 3"
           {:invalid, "producing more blocks than expected"}
 
         true ->
+	  IO.puts "CASE 4"
           :valid
       end
     end

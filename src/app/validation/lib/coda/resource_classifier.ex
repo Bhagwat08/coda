@@ -13,7 +13,10 @@ defmodule Coda.ResourceClassifier do
     labels = message["labels"]
 
     if labels["k8s-pod/role"] == "block-producer" do
-      Resources.BlockProducer.build(labels["k8s-pod/class"], labels["k8s-pod/id"])
+      app = labels["k8s-pod/app"] # e.g., whale-block-producer-4
+      id = String.split(app,"-") |> List.last |> String.to_integer
+      # class, id, win_rate
+      Resources.BlockProducer.build(labels["k8s-pod/class"], id, 0.15)
     else
       Resources.CodaNode.build(labels["k8s-pods/name"])
     end

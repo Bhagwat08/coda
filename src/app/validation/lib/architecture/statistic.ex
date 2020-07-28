@@ -91,12 +91,14 @@ defmodule Architecture.Statistic do
       Enum.each(params.mod.providers(),
 	fn provider ->
 	  cond do
-	    Util.has_behaviour?(provider,Architecture.Log_provider) ->
+	    Util.has_behaviour?(provider,Architecture.LogProvider) ->
+	      IO.puts "Statistic #{params.mod} is subscribing to log provider #{provider}"
 	      LogProvider.Junction.subscribe(provider, params.resource)
 	    Util.has_behaviour?(provider,Architecture.Statistic) ->
+	      IO.puts "Statistic #{params.mod} is subscribing to statistic #{provider}"
 	      Statistic.Junction.subscribe(provider, params.resource)
 	    true ->
-	      raise "#{provider} must be an instance of either Log_provider or Statistic"
+	      raise "#{provider} does not have the behaviour of either LogProvider or Statistic"
 	  end
 	end)
       state = params.mod.init(params.resource)
@@ -105,6 +107,11 @@ defmodule Architecture.Statistic do
 
     @impl true
     def handle_cast({:subscription, provider, message}, {params, state}) do
+      IO.puts "HANDLE CAST"
+      IO.inspect provider
+      IO.inspect message
+      IO.inspect params
+      IO.inspect state
       state = params.mod.handle_message(params.resource, state, provider, message)
       Statistic.Junction.broadcast(__MODULE__, params.resource, state)
       {:noreply, {params, state}}

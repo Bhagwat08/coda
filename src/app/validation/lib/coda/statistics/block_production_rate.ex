@@ -6,6 +6,8 @@ defmodule Coda.Statistics.BlockProductionRate do
 
   use Statistic
 
+  require Logger
+
   @impl true
   def providers, do: [Coda.Providers.BlockProduced]
   @impl true
@@ -52,6 +54,7 @@ defmodule Coda.Statistics.BlockProductionRate do
 
   @impl true
   def handle_message(_resource, state, Coda.Providers.BlockProduced, _log) do
+    Logger.info "Handling message in BlockProductionRate"
     %State{state | blocks_produced: state.blocks_produced + 1}
   end
 end

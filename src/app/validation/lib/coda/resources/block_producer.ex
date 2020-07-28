@@ -5,15 +5,17 @@ defmodule Coda.Resources.BlockProducer do
 
   defresource(Coda.Resources.CodaNode,
     class: String.t(),
-    id: pos_integer()
+    id: pos_integer(),
+    win_rate: float()
   )
 
-  @spec build(String.t(), pos_integer()) :: t()
-  def build(class, id) do
+  @spec build(String.t(), pos_integer(), float()) :: t()
+  def build(class, id, win_rate) do
     %__MODULE__{
       name: "#{class}-block-producer-#{id}",
       class: class,
-      id: id
+      id: id,
+      win_rate: win_rate
     }
   end
 

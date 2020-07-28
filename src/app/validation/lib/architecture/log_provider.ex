@@ -86,6 +86,8 @@ defmodule Architecture.LogProvider do
     # TODO: properly define message schema as a type
     @spec handle_message(map) :: :ok
     def handle_message(message) do
+      IO.puts "MESSAGE"
+      IO.inspect message
       resource =
         try do
           # TODO: implement dynamic resource classification
@@ -96,6 +98,8 @@ defmodule Architecture.LogProvider do
             reraise e, __STACKTRACE__
         end
 
+      IO.puts "BROADCAST MESSAGE"
+      IO.inspect resource
       LogProvider.Junction.broadcast(__MODULE__, resource, message)
     end
   end
