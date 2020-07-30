@@ -107,13 +107,13 @@ defmodule Architecture.Statistic do
 
     @impl true
     def handle_cast({:subscription, provider, message}, {params, state}) do
-      IO.puts "HANDLE CAST"
+      IO.puts "STATISTICS HANDLE CAST"
       IO.inspect provider
       IO.inspect message
       IO.inspect params
       IO.inspect state
       state = params.mod.handle_message(params.resource, state, provider, message)
-      Statistic.Junction.broadcast(__MODULE__, params.resource, state)
+      Statistic.Junction.broadcast(params.mod, params.resource, state)
       {:noreply, {params, state}}
     end
 

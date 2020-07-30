@@ -55,6 +55,9 @@ defmodule Architecture.Validation do
     def init({mod, resource}) do
       Logger.metadata(context: __MODULE__)
       Logger.info("initializing")
+      IO.puts "VALIDATING FOR"
+      IO.inspect mod
+      IO.inspect resource
 
       # TODO: pluralize
       # validations = Enum.map(...)
@@ -64,15 +67,23 @@ defmodule Architecture.Validation do
     @impl true
     def handle_continue(nil, {mod, resource}) do
       Logger.info("subscribing to #{mod.statistic()}")
+      IO.puts "VALIDATION SUBSCRIPTION"
+      IO.inspect(mod.statistic())
       Statistic.Junction.subscribe(mod.statistic(), resource)
       {:noreply, {mod, resource}}
     end
 
     @impl true
-    def handle_cast({:subscription, statistic, state}, {mod, resource}) do
-      Logger.info("received new state from #{statistic}")
+    def handle_cast({:subscription, {statistic,_res}, state}, {mod, resource}) do
+      IO.puts "VALIDATION HANDLE CAST"
+      Logger.info("received new state from statistic #{statistic}")
 
-      case mod.validate(resource, state) do
+      IO.puts "RESOURCE"
+      IO.inspect resource
+      IO.puts "STATE"
+      IO.inspect state
+
+      case mod.validate({statistic,resource}, state) do
         :valid ->
           Logger.info("validation successful")
           {:noreply, {mod, resource}}

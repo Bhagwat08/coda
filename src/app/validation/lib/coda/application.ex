@@ -102,7 +102,7 @@
 
     log_providers_spec = [
       %Architecture.LogProvider.Spec{
-        log_provider: Coda.LogProvider.BlockProduced,
+        log_provider: Coda.Providers.BlockProduced,
         subscription: log_pipeline.subscription,
         conn: api_conns.pubsub
       }

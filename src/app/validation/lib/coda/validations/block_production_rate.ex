@@ -17,13 +17,14 @@ defmodule Coda.Validations.BlockProductionRate do
   def statistic, do: Coda.Statistics.BlockProductionRate
 
   @impl true
-  def validate(_resource, Coda.Statistics.BlockProductionRate, state) do
+  def validate({Coda.Statistics.BlockProductionRate,_resource}, state) do
     IO.puts "VALIDATOR FOR BLOCK PRODUCTION RATE"
     # implication
     if state.elapsed_time < grace_window(state) do
       :valid
     else
-      slots_elapsed = state.elapsed_ns / slot_time()
+      # BUG: no field elapsed_ns
+      slots_elapsed = state.elapsed_ns / (slot_time())
       slot_production_ratio = state.blocks_produced / slots_elapsed
 
       # putting the call to acceptable_margin() here make dialyzer happy
@@ -34,6 +35,7 @@ defmodule Coda.Validations.BlockProductionRate do
 	  IO.puts "CASE 1"
           {:invalid, "unexpected, slot production ratio is 1 or greater"}
 
+        # BUG: no field stake_ratio
         slot_production_ratio < expected_win_rate(state.stake_ratio) - margin ->
 	  IO.puts "CASE 2"
           {:invalid, "not producing enough blocks"}

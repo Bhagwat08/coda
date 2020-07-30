@@ -53,8 +53,8 @@ defmodule Coda.Statistics.BlockProductionRate do
   def update(_resource, state), do: update_time(state)
 
   @impl true
-  def handle_message(_resource, state, Coda.Providers.BlockProduced, _log) do
-    Logger.info "Handling message in BlockProductionRate"
+  def handle_message(_resource, state, {Coda.Providers.BlockProduced,_}, _message) do
+    Logger.info "HANDLING MESSAGE IN BlockProductionRate"
     %State{state | blocks_produced: state.blocks_produced + 1}
   end
 end

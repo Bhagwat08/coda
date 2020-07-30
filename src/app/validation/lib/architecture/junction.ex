@@ -15,10 +15,14 @@ defmodule Architecture.Junction do
       end
 
       def subscribe(key) do
+	IO.puts "SUBSCRIBE KEY"
+	IO.inspect key
         Registry.register(__MODULE__, key, [])
       end
 
       def broadcast(key, msg) do
+	IO.puts "BROADCAST KEY"
+	IO.inspect key
         Registry.dispatch(__MODULE__, key, fn entries ->
           msg = {:subscription, key, msg}
           Enum.each(entries, fn {pid, _} -> GenServer.cast(pid, msg) end)
